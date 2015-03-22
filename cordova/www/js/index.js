@@ -52,14 +52,16 @@ var app = {
         app.scan();
     },
     scan: function(e) {
-        var scanSeconds = 5;
         deviceList.innerHTML = ""; // clear the list
         app.showProgressIndicator("Scanning for Bluetooth Devices...");
-        ble.scan([lock.serviceUUID], scanSeconds,
+
+        ble.startScan([lock.serviceUUID],
             app.onDeviceDiscovered,
             function() { alert("Listing Bluetooth Devices Failed"); }
         );
-        setTimeout(app.onScanComplete, scanSeconds * 1000);
+
+        // stop scan after 5 seconds
+        setTimeout(ble.stopScan, 5000, app.onScanComplete);
 
     },
     connect: function (e) {
@@ -116,7 +118,7 @@ var app = {
         }
 
         ble.write(
-            app.connectedPeripheral.id, 
+            app.connectedPeripheral.id,
             lock.serviceUUID,
             lock.unlockUUID,
             stringToArrayBuffer(code),
