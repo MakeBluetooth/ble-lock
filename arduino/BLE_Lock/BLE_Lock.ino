@@ -27,10 +27,9 @@
 //#define BLE_RST 9
 
 BLEPeripheral blePeripheral = BLEPeripheral(BLE_REQ, BLE_RDY, BLE_RST);
-BLEService lockService = BLEService("03D0A2C0-9FBA-4350-9B74-47DBEA0CE228");
-BLECharacteristic unlockCharacteristic = BLECharacteristic("03D0A2C1-9FBA-4350-9B74-47DBEA0CE228", BLEWrite, 20);
-BLECharacteristic statusCharacteristic = BLECharacteristic("03D0A2C2-9FBA-4350-9B74-47DBEA0CE228", BLERead | BLENotify, 20);
-//BLECharCharacteristic statusCharacteristic = BLECharCharacteristic("03D0A2C2-9FBA-4350-9B74-47DBEA0CE228", BLERead | BLENotify);
+BLEService lockService = BLEService("03d0a2c0-9fba-4350-9b74-47dbea0ce228");
+BLECharacteristic unlockCharacteristic = BLECharacteristic("03d0a2c1-9fba-4350-9b74-47dbea0ce228", BLEWrite, 20);
+BLECharacteristic statusCharacteristic = BLECharacteristic("03d0a2c2-9fba-4350-9b74-47dbea0ce228", BLERead | BLENotify, 20);
 
 // code that opens the lock
 char secret[] = { '1', '2', '3', '4', '5' };
@@ -41,7 +40,7 @@ void setup() {
   Serial.println(F("BLE Lock"));
 
   // set advertised name and service
-  blePeripheral.setDeviceName("BLE Lock");
+  blePeripheral.setLocalName("BLE Lock");
   blePeripheral.setAdvertisedServiceUuid(lockService.uuid());
 
   // add service and characteristic
@@ -102,7 +101,6 @@ void openLock(const unsigned char* code) {
   openTime = millis();  // set even if bad code so we can reset the lights
   
   // does the code match the secret
-  // TODO how do I know the length of characteristic? is it 0 padded to 20?
   boolean match = false;
   for (int i = 0; i < sizeof(code); i++) {
     Serial.print(secret[i]);
