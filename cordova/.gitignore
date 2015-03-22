@@ -1,0 +1,11 @@
+platforms
+plugins
+
+.DS_Store
+local.properties
+
+*.xcworkspace
+xcuserdata
+build/*
+.staging
+
