@@ -60,7 +60,7 @@ var app = {
             function() { alert("Listing Bluetooth Devices Failed"); }
         );
         setTimeout(app.onScanComplete, scanSeconds * 1000);
-        
+
     },
     connect: function (e) {
         var device = e.target.dataset.deviceId;
@@ -115,9 +115,12 @@ var app = {
             app.hideProgressIndicator();
         }
 
-        // write is broken, not getting callbacks
-        ble.write(app.connectedPeripheral.id, lock.serviceUUID, lock.unlockUUID, stringToArrayBuffer(code), success, failure);
-        //ble.writeWithoutResponse(app.connectedPeripheral.id, lock.serviceUUID, lock.unlockUUID, stringToArrayBuffer(code), success, failure);
+        ble.write(
+            app.connectedPeripheral.id, 
+            lock.serviceUUID,
+            lock.unlockUUID,
+            stringToArrayBuffer(code),
+            success, failure);
 
     },
     onDeviceDiscovered: function(device) {
