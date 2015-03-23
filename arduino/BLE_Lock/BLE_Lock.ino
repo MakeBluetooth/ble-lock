@@ -29,7 +29,12 @@
 BLEPeripheral blePeripheral = BLEPeripheral(BLE_REQ, BLE_RDY, BLE_RST);
 BLEService lockService = BLEService("03d0a2c0-9fba-4350-9b74-47dbea0ce228");
 BLECharacteristic unlockCharacteristic = BLECharacteristic("03d0a2c1-9fba-4350-9b74-47dbea0ce228", BLEWrite, 20);
-BLECharacteristic statusCharacteristic = BLECharacteristic("03d0a2c2-9fba-4350-9b74-47dbea0ce228", BLERead | BLENotify, 20);
+BLEDescriptor unlockDescriptor = BLEDescriptor("2901", "Unlock");
+BLECharacteristic statusCharacteristic = BLECharacteristic("03d0a2c2-9fba-4350-9b74-47dbea0ce228", BLENotify, 20);
+BLEDescriptor statusDescriptor = BLEDescriptor("2901", "Status Message");
+// https://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
+const unsigned char format[] = { 0x19, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00 }; // UTF-8 String
+BLEDescriptor formatDescriptor = BLEDescriptor("2904", format, 7);
 
 // code that opens the lock
 char secret[] = { '1', '2', '3', '4', '5' };
@@ -45,8 +50,13 @@ void setup() {
 
   // add service and characteristic
   blePeripheral.addAttribute(lockService);
+  
   blePeripheral.addAttribute(unlockCharacteristic);
+  blePeripheral.addAttribute(unlockDescriptor);
+  
   blePeripheral.addAttribute(statusCharacteristic);
+  blePeripheral.addAttribute(statusDescriptor);
+  blePeripheral.addAttribute(formatDescriptor);
 
   // assign event handlers for connected, disconnected to peripheral
   blePeripheral.setEventHandler(BLEConnected, blePeripheralConnectHandler);
