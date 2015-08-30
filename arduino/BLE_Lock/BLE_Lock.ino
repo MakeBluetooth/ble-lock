@@ -33,10 +33,6 @@ BLEDescriptor unlockDescriptor = BLEDescriptor("2901", "Unlock");
 BLECharacteristic statusCharacteristic = BLECharacteristic("D272", BLENotify, 20);
 BLEDescriptor statusDescriptor = BLEDescriptor("2901", "Status Message");
 
-// https://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
-const unsigned char format[] = { 0x19, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00 }; // UTF-8 String
-BLEDescriptor formatDescriptor = BLEDescriptor("2904", format, sizeof(format)/sizeof(format[0]));
-
 // code that opens the lock
 char secret[] = { '1', '2', '3', '4', '5' };
 long openTime = 0;
@@ -58,7 +54,6 @@ void setup() {
   
   blePeripheral.addAttribute(statusCharacteristic);
   blePeripheral.addAttribute(statusDescriptor);
-  blePeripheral.addAttribute(formatDescriptor);
 
   // assign event handlers for connected, disconnected to peripheral
   blePeripheral.setEventHandler(BLEConnected, blePeripheralConnectHandler);
