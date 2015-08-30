@@ -99,7 +99,7 @@ void blePeripheralDisconnectHandler(BLECentral& central) {
 
 void unlockCharacteristicWritten(BLECentral& central, BLECharacteristic& characteristic) {
   // central wrote new value to the unlock characteristic
-  Serial.print(F("Unlock characteristic written"));
+  Serial.println(F("Unlock characteristic written"));
 
   openLock(characteristic.value(), characteristic.valueLength());
 }
