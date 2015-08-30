@@ -16,25 +16,26 @@
 // See BLE Peripheral documentation for setting for your hardware
 // https://github.com/sandeepmistry/arduino-BLEPeripheral#pinouts
 
-// BLE Shield 2.x
-#define BLE_REQ 9
-#define BLE_RDY 8
-#define BLE_RST UNUSED
-
 // Adafruit Bluefruit LE
-//#define BLE_REQ 10
-//#define BLE_RDY 2
-//#define BLE_RST 9
+#define BLE_REQ 10
+#define BLE_RDY 2
+#define BLE_RST 9
+
+// RedBear BLE Shield 2.x
+//#define BLE_REQ 9
+//#define BLE_RDY 8
+//#define BLE_RST UNUSED
 
 BLEPeripheral blePeripheral = BLEPeripheral(BLE_REQ, BLE_RDY, BLE_RST);
-BLEService lockService = BLEService("03d0a2c0-9fba-4350-9b74-47dbea0ce228");
-BLECharacteristic unlockCharacteristic = BLECharacteristic("03d0a2c1-9fba-4350-9b74-47dbea0ce228", BLEWrite, 20);
+BLEService lockService = BLEService("D270");
+BLECharacteristic unlockCharacteristic = BLECharacteristic("D271", BLEWrite, 20);
 BLEDescriptor unlockDescriptor = BLEDescriptor("2901", "Unlock");
-BLECharacteristic statusCharacteristic = BLECharacteristic("03d0a2c2-9fba-4350-9b74-47dbea0ce228", BLENotify, 20);
+BLECharacteristic statusCharacteristic = BLECharacteristic("D272", BLENotify, 20);
 BLEDescriptor statusDescriptor = BLEDescriptor("2901", "Status Message");
+
 // https://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
 const unsigned char format[] = { 0x19, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00 }; // UTF-8 String
-BLEDescriptor formatDescriptor = BLEDescriptor("2904", format, 7);
+BLEDescriptor formatDescriptor = BLEDescriptor("2904", format, sizeof(format)/sizeof(format[0]));
 
 // code that opens the lock
 char secret[] = { '1', '2', '3', '4', '5' };
@@ -45,6 +46,7 @@ void setup() {
   Serial.println(F("BLE Lock"));
 
   // set advertised name and service
+  blePeripheral.setDeviceName("BLE Lock");
   blePeripheral.setLocalName("BLE Lock");
   blePeripheral.setAdvertisedServiceUuid(lockService.uuid());
 
@@ -102,26 +104,29 @@ void blePeripheralDisconnectHandler(BLECentral& central) {
 
 void unlockCharacteristicWritten(BLECentral& central, BLECharacteristic& characteristic) {
   // central wrote new value to the unlock characteristic
-  Serial.print(F("Characteristic event, writen: "));
+  Serial.print(F("Characteristic event, written: "));
 
-  openLock(characteristic.value());
+  openLock(characteristic.value(), characteristic.valueLength());
 }
 
-void openLock(const unsigned char* code) {
+void openLock(const unsigned char* code, int codeLength) {
   openTime = millis();  // set even if bad code so we can reset the lights
   
   // does the code match the secret
   boolean match = false;
-  for (int i = 0; i < sizeof(code); i++) {
-    Serial.print(secret[i]);
-    Serial.print(" ");
-    Serial.println(code[i]);
+
+  if (sizeof(secret) == codeLength) {
+    for (int i = 0; i < codeLength; i++) {
+//      Serial.print(secret[i]);
+//      Serial.print(" ");
+//      Serial.println(code[i]);
     
-    if (secret[i] != code[i]) {
-      match = false;
-      break;
-    } else {
-      match = true;
+      if (secret[i] != code[i]) {
+        match = false;
+        break;
+      } else {
+        match = true;
+      }
     }
   }
   
