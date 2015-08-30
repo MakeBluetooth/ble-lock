@@ -1,8 +1,8 @@
 // Bluetooth Low Energy Lock
 // (c) 2014-2015 Don Coleman
 //
+// Adafruit nRF8001 Bluefruit LE http://adafru.it/1697
 // RedBear Lab BLE Shield http://redbearlab.com/bleshield/
-// or Bluefruit LE http://adafru.it/1697
 // Solenoid Lock http://adafru.it/1512
 // arduino-BLEPeripheral https://github.com/sandeepmistry/arduino-BLEPeripheral.git
 
@@ -99,7 +99,7 @@ void blePeripheralDisconnectHandler(BLECentral& central) {
 
 void unlockCharacteristicWritten(BLECentral& central, BLECharacteristic& characteristic) {
   // central wrote new value to the unlock characteristic
-  Serial.print(F("Characteristic event, written: "));
+  Serial.print(F("Unlock characteristic written"));
 
   openLock(characteristic.value(), characteristic.valueLength());
 }
@@ -112,10 +112,6 @@ void openLock(const unsigned char* code, int codeLength) {
 
   if (sizeof(secret) == codeLength) {
     for (int i = 0; i < codeLength; i++) {
-//      Serial.print(secret[i]);
-//      Serial.print(" ");
-//      Serial.println(code[i]);
-    
       if (secret[i] != code[i]) {
         match = false;
         break;
@@ -134,7 +130,7 @@ void openLock(const unsigned char* code, int codeLength) {
     statusCharacteristic.setValue("unlocked");
   } else {
     // bad code, don't open
-    Serial.println("Invalid code "); // + code);
+    Serial.println("Invalid code");
     digitalWrite(RED_LED_PIN, HIGH);
     statusCharacteristic.setValue("invalid code");
   }
