@@ -3,9 +3,9 @@
 // Bluetooth Low Energy Lock (c) 2014-2015 Don Coleman
 
 var lock = {
-    serviceUUID: "03d0a2c0-9fba-4350-9b74-47dbea0ce228",
-    unlockUUID: "03d0a2c1-9fba-4350-9b74-47dbea0ce228",
-    statusUUID: "03d0a2c2-9fba-4350-9b74-47dbea0ce228"
+    serviceUUID: "D270",
+    unlockUUID: "D271",
+    statusUUID: "D272"
 };
 
 function stringToArrayBuffer(str) {
