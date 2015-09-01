@@ -4,7 +4,7 @@
 
 ![](images/BluetoothLock.png)
 
-The Arduino sketche requires the [BLEPeripheral](https://github.com/sandeepmistry/arduino-BLEPeripheral) library.
+The Arduino sketch requires the [BLEPeripheral](https://github.com/sandeepmistry/arduino-BLEPeripheral) library.
 
 ## Cordova
 

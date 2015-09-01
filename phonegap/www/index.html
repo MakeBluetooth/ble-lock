@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title>BLE Lock</title>
+    </head>
+    <body>
+        <div id="deviceListScreen">
+            <h1>Devices</h1>
+            <ul id="deviceList">
+                <li>Searching...</li>
+            </ul>
+            <div>
+                <button id="refreshButton">Refresh</button>
+            </div>
+        </div>
+        <div id="unlockScreen">
+            <form>
+                <input type="tel" name="code">
+                <input type="submit" value="Unlock">
+            </form>
+            <button id="disconnectButton">Disconnect</button>
+        </div>
+        <div id="statusDiv"></div>
+        <div id="scrim">
+            <p>Processing</p>
+        </div>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+    </body>
+</html>

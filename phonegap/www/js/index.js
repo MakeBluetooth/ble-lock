@@ -2,11 +2,9 @@
 
 // Bluetooth Low Energy Lock (c) 2014-2015 Don Coleman
 
-var lock = {
-    serviceUUID: "D270",
-    unlockUUID: "D271",
-    statusUUID: "D272"
-};
+var SERVICE_UUID = 'D270';
+var UNLOCK_UUID = 'D271';
+var MESSAGE_UUID = 'D272';
 
 function stringToArrayBuffer(str) {
     // assuming 8 bit bytes
@@ -23,27 +21,17 @@ function bytesToString(buffer) {
 }
 
 var app = {
-    connectedPeripheral: null,
+    //connectedPeripheral: null,
 
-    // Application Constructor
     initialize: function() {
         this.bindEvents();
         deviceListScreen.hidden = true;
         unlockScreen.hidden = true;
     },
-    // Bind Event Listeners
-    //
-    // Bind any events that are required on startup. Common events are:
-    // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
         document.forms[0].addEventListener('submit', this.unlock, false);
-
     },
-    // deviceready Event Handler
-    //
-    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicity call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         deviceList.ontouchstart = app.connect; // assume not scrolling
         refreshButton.ontouchstart = app.scan;
@@ -55,7 +43,7 @@ var app = {
         deviceList.innerHTML = ""; // clear the list
         app.showProgressIndicator("Scanning for Bluetooth Devices...");
 
-        ble.startScan([lock.serviceUUID],
+        ble.startScan([SERVICE_UUID],
             app.onDeviceDiscovered,
             function() { alert("Listing Bluetooth Devices Failed"); }
         );
@@ -64,71 +52,10 @@ var app = {
         setTimeout(ble.stopScan, 5000, app.onScanComplete);
 
     },
-    connect: function (e) {
-        var device = e.target.dataset.deviceId;
-        app.showProgressIndicator("Requesting connection to " + device);
-        ble.connect(device, app.onConnect, app.onDisconnect);
-    },
-    disconnect: function (e) {
-        if (e) {
-            e.preventDefault();
-        }
-
-        app.setStatus("Disconnecting...");
-        ble.disconnect(app.connectedPeripheral.id, function() {
-            app.setStatus("Disconnected");
-            setTimeout(app.scan, 800);
-        });
-    },
-    onConnect: function(peripheral) {
-        app.connectedPeripheral = peripheral;
-        app.showUnlockScreen();
-        app.setStatus("Connected");
-        ble.notify(peripheral.id, lock.serviceUUID, lock.statusUUID, app.onData);
-    },
-    onDisconnect: function(reason) {
-        if (!reason) {
-            reason = "Connection Lost";
-        }
-        app.setStatus(reason);
-
-        app.hideProgressIndicator();
-        app.showDeviceListPage();
-    },
-    onData: function(buffer) {
-        var message = bytesToString(buffer);
-        app.setStatus(message);
-        app.hideProgressIndicator();
-    },
-    unlock: function(e) {
-        var code = e.target.code.value;
-        e.preventDefault(); // don't submit the form
-
-        if (code === "") { return; } // don't send empty data
-        app.showProgressIndicator();
-
-        function success() {
-            e.target.code.value = ""; //  clear the input
-            //app.hideProgressIndicator();
-        }
-
-        function failure (reason) {
-            alert("Error sending code " + reason);
-            app.hideProgressIndicator();
-        }
-
-        ble.write(
-            app.connectedPeripheral.id,
-            lock.serviceUUID,
-            lock.unlockUUID,
-            stringToArrayBuffer(code),
-            success, failure);
-
-    },
     onDeviceDiscovered: function(device) {
         var listItem, rssi;
 
-        app.showDeviceListPage();
+        app.showDeviceListScreen();
 
         console.log(JSON.stringify(device));
         listItem = document.createElement('li');
@@ -144,12 +71,72 @@ var app = {
         var deviceListLength = deviceList.getElementsByTagName('li').length;
         app.setStatus("Found " + deviceListLength + " device" + (deviceListLength === 1 ? "." : "s."));
     },
-    onScanComplete: function() { // this isn't strictly necessary
+    onScanComplete: function() {
         var deviceListLength = deviceList.getElementsByTagName('li').length;
         if (deviceListLength === 0) {
-            app.showDeviceListPage();
+            app.showDeviceListScreen();
             app.setStatus("No Bluetooth Peripherals Discovered.");
         }
+    },
+    connect: function (e) {
+        var device = e.target.dataset.deviceId;
+        app.showProgressIndicator("Requesting connection to " + device);
+        ble.connect(device, app.onConnect, app.onDisconnect);
+    },
+    onConnect: function(peripheral) {
+        app.connectedPeripheral = peripheral;
+        app.showUnlockScreen();
+        app.setStatus("Connected");
+        ble.notify(peripheral.id, SERVICE_UUID, MESSAGE_UUID, app.onData);
+    },
+    onDisconnect: function(reason) {
+        if (!reason) {
+            reason = "Connection Lost";
+        }
+        app.hideProgressIndicator();
+        app.showDeviceListScreen();
+        app.setStatus(reason);
+    },
+    disconnect: function (e) {
+        if (e) {
+            e.preventDefault();
+        }
+
+        app.setStatus("Disconnecting...");
+        ble.disconnect(app.connectedPeripheral.id, function() {
+            app.setStatus("Disconnected");
+            setTimeout(app.scan, 800);
+        });
+    },
+    onData: function(buffer) {
+        var message = bytesToString(buffer);
+        app.setStatus(message);
+        app.hideProgressIndicator();
+    },
+    unlock: function(e) {
+        var code = e.target.code.value;
+        e.preventDefault(); // don't submit the form
+
+        if (code === "") { return; } // don't send empty data
+        app.showProgressIndicator();
+
+        function success() {
+            e.target.code.value = ""; //  clear the input
+        }
+
+        function failure (reason) {
+            alert("Error sending code " + reason);
+            app.hideProgressIndicator();
+        }
+
+        ble.write(
+            app.connectedPeripheral.id,
+            SERVICE_UUID,
+            UNLOCK_UUID,
+            stringToArrayBuffer(code),
+            success, failure
+        );
+
     },
     showProgressIndicator: function(message) {
         if (!message) { message = "Processing"; }
@@ -160,15 +147,15 @@ var app = {
     hideProgressIndicator: function() {
         scrim.hidden = true;
     },
-    showUnlockScreen: function() {
-        unlockScreen.hidden = false;
-        deviceListScreen.hidden = true;
+    showDeviceListScreen: function() {
+        unlockScreen.hidden = true;
+        deviceListScreen.hidden = false;
         app.hideProgressIndicator();
         statusDiv.innerHTML = "";
     },
-    showDeviceListPage: function() {
-        unlockScreen.hidden = true;
-        deviceListScreen.hidden = false;
+    showUnlockScreen: function() {
+        unlockScreen.hidden = false;
+        deviceListScreen.hidden = true;
         app.hideProgressIndicator();
         statusDiv.innerHTML = "";
     },
@@ -178,3 +165,5 @@ var app = {
     }
 
 };
+
+app.initialize();

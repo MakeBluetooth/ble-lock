@@ -2,10 +2,10 @@ body {
     -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
     -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
     -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
-    
+
     font-family: "Helvetica Neue";
     font-weight: lighter;
-    
+
     text-align: center;
 }
 
@@ -17,7 +17,7 @@ body {
 #connectionScreen {
 }
 
-input { 
+input {
     display: block;
     margin: 10px;
     padding: 10px;
@@ -25,8 +25,8 @@ input {
 }
 
 input[type=tel] {
-    width: 90%; /* kludge */    
-    font-size: 0.8em;    
+    width: 90%; /* kludge */
+    font-size: 0.8em;
 }
 
 /* webkit appearance is important for iOS */
@@ -44,7 +44,7 @@ button {
 
 form {
     margin: 30px;
-    font-size: 2em;    
+    font-size: 2em;
 }
 
 #statusDiv {
@@ -60,14 +60,14 @@ form {
     height: 100%;
     text-align: center;
     background-color:rgba(128,128,160,0.5);
-    z-index: 15;    
+    z-index: 15;
 }
 
 #scrim p {
     font-size: 1.5em;
-    margin-top: 80%;    
+    margin-top: 80%;
     -webkit-animation: pulsate 2s ease-in-out;
-    -webkit-animation-iteration-count: infinite; 
+    -webkit-animation-iteration-count: infinite;
     opacity: 1.0
     font-family: "Helvetica Neue";
     font-weight: bold;
@@ -79,12 +79,12 @@ form {
     100% {opacity: 1.0;}
 }
 
-ul li { 
+ul li {
 	border-top: 1px solid black;
 	list-style-type: none;
 	padding-top: 10px;
 	padding-bottom: 10px;
-	font-size: 0.9em;    		
+	font-size: 0.9em;
 }
 
 ul > li:last-child {

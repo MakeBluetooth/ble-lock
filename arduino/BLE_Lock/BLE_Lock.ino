@@ -34,7 +34,7 @@ BLECharacteristic statusCharacteristic = BLECharacteristic("D272", BLENotify, 20
 BLEDescriptor statusDescriptor = BLEDescriptor("2901", "Status Message");
 
 // code that opens the lock
-char secret[] = { '1', '2', '3', '4', '5' };
+char secret[] = "12345";
 long openTime = 0;
 
 void setup() {
@@ -110,7 +110,7 @@ void openLock(const unsigned char* code, int codeLength) {
   // does the code match the secret
   boolean match = false;
 
-  if (sizeof(secret) == codeLength) {
+  if (strlen(secret) == codeLength) {
     for (int i = 0; i < codeLength; i++) {
       if (secret[i] != code[i]) {
         match = false;
