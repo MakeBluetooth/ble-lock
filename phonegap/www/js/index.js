@@ -21,8 +21,6 @@ function bytesToString(buffer) {
 }
 
 var app = {
-    //connectedPeripheral: null,
-
     initialize: function() {
         this.bindEvents();
         deviceListScreen.hidden = true;
