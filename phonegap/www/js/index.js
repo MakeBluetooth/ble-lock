@@ -69,7 +69,8 @@ var app = {
         deviceList.appendChild(listItem);
 
         var deviceListLength = deviceList.getElementsByTagName('li').length;
-        app.setStatus("Found " + deviceListLength + " device" + (deviceListLength === 1 ? "." : "s."));
+        app.setStatus("Found " + deviceListLength +
+                      " device" + (deviceListLength === 1 ? "." : "s."));
     },
     onScanComplete: function() {
         var deviceListLength = deviceList.getElementsByTagName('li').length;
